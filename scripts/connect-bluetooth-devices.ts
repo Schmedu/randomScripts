@@ -1,24 +1,17 @@
 // Name: Connect / Disconnect Bluetooth Devices
 // Description: Toggles a bluetooth device connection
-// Alert: Make sure to have "blueutil" via brew installed or you have it in your PATH.
+// Alert: Make sure to have "blueutil" via brew installed
 // Author: Eduard Uffelmann
 // Twitter: @schmedu_
 // Linkedin: https://www.linkedin.com/in/euffelmann/
 // Website: https://schmedu.com
 
 import "@johnlindquist/kit";
+import fs from "fs";
 
-// Include the current environment variables along with the PATH to homebrew binaries
-const optionsWithHomebrewPath = {
-    env: {
-        ...process.env,
-        PATH: `${process.env.PATH}:/opt/homebrew/bin/`,
-    },
-};
+const BLUEUTIL_PATH = "/opt/homebrew/bin/blueutil";
 
-try {
-    await exec(`which blueutil`, optionsWithHomebrewPath);
-} catch (error) {
+if (!fs.existsSync(BLUEUTIL_PATH)) {
     let installBlueutil = await arg(
         {
             placeholder: "Please install blueutil",
@@ -65,7 +58,7 @@ function parseBluetoothDevices(
     return devices;
 }
 
-let { stdout } = await exec(`blueutil --paired`, optionsWithHomebrewPath);
+let { stdout } = await exec(`${BLUEUTIL_PATH} --paired`);
 let devices = parseBluetoothDevices(stdout);
 
 let device = await arg(
@@ -83,10 +76,10 @@ let device = await arg(
 );
 
 if (device.connected) {
-    await exec(
-        `blueutil --disconnect "${device.address}"`,
-        optionsWithHomebrewPath
-    );
+    console.log(`Disconnecting ${device.name}`);
+    await exec(`${BLUEUTIL_PATH} --disconnect "${device.address}"`);
 } else {
-    await exec(`blueutil --connect "${device.address}"`, optionsWithHomebrewPath);
+    console.log(`Connecting ${device.name}`);
+    await exec(`${BLUEUTIL_PATH} --connect "${device.address}"`);
 }
+notify(`Toggled bluetooth device connection for ${device.name}`);
