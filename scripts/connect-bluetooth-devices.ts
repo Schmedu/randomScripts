@@ -1,5 +1,6 @@
 // Name: Connect / Disconnect Bluetooth Devices
 // Description: Toggles a bluetooth device connection
+// Video: https://media.schmedu.com/videos/connect-bluetooth.mp4
 // Alert: Make sure to have "blueutil" via brew installed
 // Author: Eduard Uffelmann
 // Twitter: @schmedu_
