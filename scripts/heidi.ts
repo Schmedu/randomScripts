@@ -21,10 +21,8 @@ end tell
 
 let apps = await select({ placeholder: "Select the App" }, processes);
 
-let showingApps = apps;
-
 await applescript(`
-set myList to {${showingApps.map((app) => `"${app}"`).join(", ")}}
+set myList to {${apps.map((app) => `"${app}"`).join(", ")}}
 tell application "System Events"
     set visibleApps to name of every application process whose visible is true
     repeat with appl in visibleApps
