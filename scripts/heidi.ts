@@ -9,8 +9,22 @@
 
 import "@johnlindquist/kit";
 
+let processes = (
+    await applescript(`
+tell application "System Events"
+    set listOfProcesses to (name of every process where background only is false)
+end tell
+`)
+)
+    .split(",")
+    .map((process) => process.trim());
+
+let apps = await select({ placeholder: "Select the App" }, processes);
+
+let showingApps = apps;
+
 await applescript(`
-set myList to {"${(await getActiveAppInfo()).localizedName}"}
+set myList to {${showingApps.map((app) => `"${app}"`).join(", ")}}
 tell application "System Events"
     set visibleApps to name of every application process whose visible is true
     repeat with appl in visibleApps
