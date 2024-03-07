@@ -39,7 +39,7 @@ await chat({
             chat.addMessage("");
             let messageContent = "";
             // const response = await anthropic.messages
-            await anthropic.messages
+            anthropic.messages
                 .stream({
                     model: "claude-3-opus-20240229",
                     max_tokens: 1000,
@@ -49,14 +49,16 @@ await chat({
                 .on("text", (text) => {
                     messageContent += text;
                     chat.setMessage(-1, md(messageContent));
+                })
+                .on("message_stop", () => {
+                    messages = messages.concat([
+                        newMessage,
+                        {
+                            role: "assistant",
+                            content: messageContent,
+                        },
+                    ]);
                 });
-            messages = messages.concat([
-                newMessage,
-                {
-                    role: "assistant",
-                    content: messageContent,
-                },
-            ]);
         } catch (e) {
             console.log(e);
             chat.addMessage("");
